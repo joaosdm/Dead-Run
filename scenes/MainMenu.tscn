@@ -1,0 +1,661 @@
+[gd_scene load_steps=18 format=3 uid="uid://mainmenudr01"]
+
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://b3ovu25boeb8d" path="res://assets/3D/wrecked+car+3d+model.glb" id="2_wrecked_car"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_menu"]
+sky_top_color = Color(0.04, 0.05, 0.06, 1)
+sky_horizon_color = Color(0.08, 0.09, 0.11, 1)
+ground_bottom_color = Color(0.02, 0.03, 0.04, 1)
+ground_horizon_color = Color(0.08, 0.09, 0.11, 1)
+
+[sub_resource type="Sky" id="Sky_menu"]
+sky_material = SubResource("ProceduralSkyMaterial_menu")
+
+[sub_resource type="Environment" id="Environment_menu"]
+background_mode = 2
+sky = SubResource("Sky_menu")
+ambient_light_source = 3
+ambient_light_color = Color(0.15, 0.18, 0.22, 1)
+tonemap_mode = 3
+tonemap_exposure = 1.1
+ssao_enabled = false
+glow_enabled = true
+glow_intensity = 0.75
+glow_bloom = 0.2
+fog_enabled = true
+fog_light_color = Color(0.08, 0.09, 0.11, 1)
+fog_density = 0.024
+volumetric_fog_enabled = false
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_road"]
+albedo_color = Color(0.12, 0.13, 0.14, 1)
+metallic = 0.15
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_road"]
+material = SubResource("StandardMaterial3D_road")
+size = Vector3(14, 0.2, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rain"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.7, 0.8, 0.95, 0.3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_rain"]
+material = SubResource("StandardMaterial3D_rain")
+size = Vector2(0.015, 0.45)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.05, 0.06, 0.07, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.12, 0.12, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start"]
+bg_color = Color(0.58, 0.08, 0.08, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.25, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_start_hover"]
+bg_color = Color(0.75, 0.12, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.45, 0.45, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.12, 0.14, 0.17, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.4, 0.46, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.18, 0.22, 0.27, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.7, 0.85, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.04, 0.05, 0.06, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.15, 0.15, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0.08, 0.09, 0.11, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(0.85, 0.18, 0.18, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="World3D" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World3D"]
+environment = SubResource("Environment_menu")
+
+[node name="ThunderLight" type="DirectionalLight3D" parent="World3D"]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 15, 0)
+light_color = Color(0.68, 0.76, 0.92, 1)
+light_energy = 0.08
+shadow_enabled = false
+
+[node name="Camera3D" type="Camera3D" parent="World3D"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 1.35, 4)
+current = true
+fov = 68.0
+
+[node name="RoadMesh" type="MeshInstance3D" parent="World3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -15)
+mesh = SubResource("BoxMesh_road")
+
+[node name="WreckedCarHolder" type="Node3D" parent="World3D"]
+transform = Transform3D(0.766044, 0, 0.642788, 0, 1, 0, -0.642788, 0, 0.766044, -2.6, 0.05, -3.5)
+
+[node name="WreckedCar" parent="World3D/WreckedCarHolder" instance=ExtResource("2_wrecked_car")]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 0, 0, 0)
+
+[node name="HazardLight" type="OmniLight3D" parent="World3D/WreckedCarHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.6, -0.2)
+light_color = Color(1, 0.42, 0.08, 1)
+light_energy = 1.8
+omni_range = 6.0
+
+[node name="RainParticles" type="CPUParticles3D" parent="World3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+amount = 180
+lifetime = 0.7
+preprocess = 0.5
+mesh = SubResource("QuadMesh_rain")
+emission_shape = 3
+emission_box_extents = Vector3(8, 0.5, 12)
+direction = Vector3(0.05, -1, -0.1)
+spread = 2.0
+initial_velocity_min = 16.0
+initial_velocity_max = 20.0
+
+[node name="PrewarmViewport" type="SubViewport" parent="."]
+disable_3d = false
+own_world_3d = false
+render_target_update_mode = 1
+size = Vector2i(64, 64)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="MainPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Vignette" type="ColorRect" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.02, 0.03, 0.45)
+
+[node name="Header" type="VBoxContainer" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 60.0
+offset_top = 40.0
+offset_right = -60.0
+offset_bottom = 145.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+
+[node name="TitleLabel" type="Label" parent="UI/MainPanel/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.15, 0.15, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 54
+text = "DEAD RUN"
+horizontal_alignment = 0
+
+[node name="SubtitleLabel" type="Label" parent="UI/MainPanel/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.82, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.7)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 14
+text = "RODOVIA 07 // ZONA DE QUARENTENA E EVACUAÇÃO MILITAR"
+horizontal_alignment = 0
+
+[node name="ModeSection" type="VBoxContainer" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 60.0
+offset_top = -140.0
+offset_right = 440.0
+offset_bottom = -30.0
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SectionTitle" type="Label" parent="UI/MainPanel/ModeSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "MODO DE JOGO // ROTA DE FUGA"
+
+[node name="ModeButtons" type="HBoxContainer" parent="UI/MainPanel/ModeSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnCampaign" type="Button" parent="UI/MainPanel/ModeSection/ModeButtons"]
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+toggle_mode = true
+button_pressed = true
+text = "CAMPANHA (800m)"
+
+[node name="BtnNightmare" type="Button" parent="UI/MainPanel/ModeSection/ModeButtons"]
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+toggle_mode = true
+text = "PESADELO INFINITO"
+
+[node name="ModeDescLabel" type="Label" parent="UI/MainPanel/ModeSection"]
+custom_minimum_size = Vector2(370, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 12
+text = "MODO CAMPANHA: Percorra 800m através dos 4 setores da rodovia até o ponto de extração do comboio militar de resgate."
+autowrap_mode = 2
+
+[node name="MutatorsSection" type="VBoxContainer" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 60.0
+offset_top = -10.0
+offset_right = 440.0
+offset_bottom = 115.0
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="SectionTitle" type="Label" parent="UI/MainPanel/MutatorsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.35, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "MODIFICADORES DE TERROR (OPCIONAL)"
+
+[node name="Grid" type="VBoxContainer" parent="UI/MainPanel/MutatorsSection"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ChkNoFlashlight" type="CheckBox" parent="UI/MainPanel/MutatorsSection/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.87, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌑 Noite Sem Lanterna (Apenas luz de relâmpagos)"
+
+[node name="ChkAllRunners" type="CheckBox" parent="UI/MainPanel/MutatorsSection/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.87, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "⚡ Horda Voraz (100% zumbis corredores)"
+
+[node name="ChkMeleeOnly" type="CheckBox" parent="UI/MainPanel/MutatorsSection/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.87, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "🗡️ Guerra de Trincheira (Faca Tática exclusiva)"
+
+[node name="RecordsCard" type="PanelContainer" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -130.0
+offset_right = -60.0
+offset_bottom = 90.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="UI/MainPanel/RecordsCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="UI/MainPanel/RecordsCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "CENTRAL DE TELEMETRIA [HISTÓRICO]"
+
+[node name="Grid" type="GridContainer" parent="UI/MainPanel/RecordsCard/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="LblDistance" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+text = "Distância Recorde:"
+
+[node name="ValDistance" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "0m"
+
+[node name="LblScore" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+text = "Maior Pontuação:"
+
+[node name="ValScore" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "0 pts"
+
+[node name="LblKills" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+text = "Zumbis Eliminados:"
+
+[node name="ValKills" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "0"
+
+[node name="LblHeadshots" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+text = "Headshots Críticos:"
+
+[node name="ValHeadshots" type="Label" parent="UI/MainPanel/RecordsCard/Margin/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "0"
+
+[node name="Actions" type="HBoxContainer" parent="UI/MainPanel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = -90.0
+offset_right = -60.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="BtnStart" type="Button" parent="UI/MainPanel/Actions"]
+custom_minimum_size = Vector2(230, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_start_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start")
+text = "▶ INICIAR CORRIDA"
+
+[node name="BtnGuide" type="Button" parent="UI/MainPanel/Actions"]
+custom_minimum_size = Vector2(200, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "📖 MANUAL DE FUGA"
+
+[node name="BtnQuit" type="Button" parent="UI/MainPanel/Actions"]
+custom_minimum_size = Vector2(130, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "SAIR"
+
+[node name="GuideModal" type="PanelContainer" parent="UI"]
+visible = false
+custom_minimum_size = Vector2(580, 420)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -290.0
+offset_top = -210.0
+offset_right = 290.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="UI/GuideModal"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Margin" type="MarginContainer" parent="UI/GuideModal/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="UI/GuideModal/VBox/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="UI/GuideModal/VBox/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
+theme_override_font_sizes/font_size = 20
+text = "MANUAL DE SOBREVIVÊNCIA // PROTOCOLO DE FUGA"
+horizontal_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="UI/GuideModal/VBox/Margin/Content"]
+layout_mode = 2
+
+[node name="ControlsGrid" type="GridContainer" parent="UI/GuideModal/VBox/Margin/Content"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="C1" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[A] / [D] ou [←] / [→]"
+
+[node name="D1" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Esquiva lateral rápida entre as 3 faixas da rodovia"
+
+[node name="C2" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[ESPAÇO]"
+
+[node name="D2" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pular barreiras militares baixas e escombros na pista"
+
+[node name="C3" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[CTRL]"
+
+[node name="D3" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Deslizar (Slide) sob placas caídas e fumaça de incêndio"
+
+[node name="C4" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[LMB / BOTÃO ESQ.]"
+
+[node name="D4" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Disparo com Pistola Glock 9mm (Headshot = 1-Hit Kill)"
+
+[node name="C5" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[R]"
+
+[node name="D5" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Recarregar cartucho da pistola"
+
+[node name="C6" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "[F]"
+
+[node name="D6" type="Label" parent="UI/GuideModal/VBox/Margin/Content/ControlsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.88, 0.92, 1)
+theme_override_font_sizes/font_size = 13
+text = "Apunhalar com Faca Tática / Romper agarrão de zumbi"
+
+[node name="RulesLabel" type="Label" parent="UI/GuideModal/VBox/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.78, 0.82, 1)
+theme_override_font_sizes/font_size = 12
+text = "• Setores 1 a 4: Dificuldade crescente a cada 250m até o comboio aos 800m.\n• Modo Pesadelo: A cada 200m a rodovia acelera e o nevoeiro fecha sem resgate."
+autowrap_mode = 2
+
+[node name="BtnCloseGuide" type="Button" parent="UI/GuideModal/VBox"]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "ENTENDIDO"
+
+[node name="SpacerBottom" type="Control" parent="UI/GuideModal/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="LoadingOverlay" type="ColorRect" parent="UI"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.03, 0.04, 1)
+
+[node name="Center" type="CenterContainer" parent="UI/LoadingOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/LoadingOverlay/Center"]
+custom_minimum_size = Vector2(460, 240)
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="LoadingTitle" type="Label" parent="UI/LoadingOverlay/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "PREPARANDO ZONA DE QUARENTENA..."
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="UI/LoadingOverlay/Center/VBox"]
+custom_minimum_size = Vector2(460, 22)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+show_percentage = false
+
+[node name="PercentLabel" type="Label" parent="UI/LoadingOverlay/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "0%"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="UI/LoadingOverlay/Center/VBox"]
+custom_minimum_size = Vector2(460, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.82, 1)
+theme_override_font_sizes/font_size = 12
+text = "Alocando memória e carregando infraestrutura de quarentena..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="TipSeparator" type="HSeparator" parent="UI/LoadingOverlay/Center/VBox"]
+layout_mode = 2
+
+[node name="TipLabel" type="Label" parent="UI/LoadingOverlay/Center/VBox"]
+custom_minimum_size = Vector2(460, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.6, 0.68, 1)
+theme_override_font_sizes/font_size = 11
+text = "Mantenha a mira na cabeça: tiros na cabeça causam dano fatal imediato."
+horizontal_alignment = 1
+autowrap_mode = 2

@@ -1,0 +1,154 @@
+# 📋 CHANGELOG — Dead Run
+
+Registro histórico local de adições, melhorias, ajustes e correções aplicadas ao projeto **Dead Run**.
+Cada entrada segue o padrão de *commit local* com data, horário e detalhamento técnico.
+
+---
+
+## [2026-11-08 02:45:00 -03:00] — Pacote de Eventos & Perigo: Manchas de Óleo Deslizantes, Horda Relâmpago (Swarm Surge) e Zumbis Sprinters
+
+### 🛢️ 1. Manchas de Óleo Diesel Deslizantes (Perda de Tração e Derrapagem)
+- **`scripts/OilSlick.gd` (NOVO):**
+  - Implementado obstáculo de pista com pool fixo de 4 instâncias (`oil_slick_pool` em `scripts/WorldSpawner.gd`).
+  - Disco cilíndrico ultra-leve rente ao asfalto (Y = 0.01m) com material único compartilhado `shared_oil_material` (preto petróleo molhado com `roughness = 0.04`, `metallic = 0.88` e iridescência).
+  - Spawn procedural a cada 80m a 130m nas faixas centrais e laterais da rodovia.
+- **`scripts/Player.gd` & `scripts/AudioManager.gd` (Física de Derrapagem):**
+  - Ao pisar na mancha de óleo, ativa `trigger_oil_slip(1.6s)`:
+    - Reduz o atrito lateral de `14.0` para `2.0`, provocando deslizamento inercial lateral (*drift*) que força o jogador a contraesterçar para não colidir com carros ou muretas.
+    - Aplica oscilação/rolagem dinâmica na câmera (`target_roll += sin(...)`) e tremor de tração.
+    - Sintetizado em `scripts/AudioManager.gd` o efeito sonoro de derrapagem `play_oil_skid()` (guincho de borracha no asfalto molhado).
+    - Exibe no HUD o alerta de cautela: `⚠️ DERRAPAGEM! PISTA COM ÓLEO DIESEL`.
+
+### 🚨 2. Alerta de Horda Relâmpago (*Swarm Surge*)
+- **`scripts/GameController.gd` & `scripts/WorldSpawner.gd`:**
+  - Implementado evento dinâmico de alta tensão que ocorre periodicamente a cada 220m a 290m durante 6 segundos.
+  - Ao iniciar o enxame:
+    - Dispara sirene de emergência de quarentena (`AudioManager.play_siren_burst()`).
+    - Exibe banner de alerta animado em vermelho carmesim no topo do HUD (`SwarmSurgePanel`): `⚠️ ALERTA DE QUARENTENA: ENXAME DE ZUMBIS SE APROXIMANDO!`.
+    - `trigger_swarm_surge()` recicla imediatamente 3 a 4 zumbis do pool em formação de cunha/leque agressivo 38m a 50m à frente do jogador.
+  - Ao sobreviver aos 6 segundos de enxame:
+    - Concede pontuação de sobrevivência de `+300 pontos` multiplicada pelo combo ativo.
+    - Concede **+2 níveis de Combo** imediatos.
+    - Toca sino triunfante e exibe no HUD: `⚡ ENXAME SUPERADO COM SUCESSO! (+300 PTS / COMBO +2)`.
+
+### 🧟 3. Zumbis Furiosos (*Sprinters*) com Olhos Carmesins
+- **`scripts/Zombie.gd`:**
+  - Criado método `set_as_sprinter(true)` que eleva a velocidade de avanço de 4.2 m/s para **7.8 a 9.4 m/s** com animação agressiva de arrancada.
+  - Adicionado visor ocular emissivo unshaded nos Sprinters (`sprinter_eyes_mesh` vermelho sangue `#ff1414`), destacando sua aproximação veloz através da neblina da rodovia com custo zero de iluminação.
+  - Reset limpo no Object Pool ao serem eliminados ou reciclados.
+
+---
+
+## [2026-11-08 02:30:00 -03:00] — Pacote de Combate & Flow: Combo Multiplier, Headshot Ding e Drops Táticos (Cura & Adrenalina)
+
+### 🔥 1. Sistema Dinâmico de Combo de Adrenalina (*Flow State*)
+- **`scripts/GameController.gd` & `scripts/HUD.gd`:**
+  - Implementado sistema de combo com decaimento acelerado de 3.6s (`combo_timer` e `combo_count`).
+  - Tiers progressivos de adrenalina com badges e cores dedicadas no HUD:
+    - **x2 (2+ ações): RAMPAGE** (Laranja vibrante `#ff9926`)
+    - **x3 (5+ ações): UNSTOPPABLE** (Dourado reluzente `#ffd933`)
+    - **x4 (9+ ações): RELENTLESS** (Ciano neon `#33e6ff`)
+    - **x5 (14+ ações): GODLIKE** (Vermelho carmesim `#ff3340`)
+  - **Ações que alimentam o combo:** Headshots (+2), Abates comuns (+1), Raspão quase-fatal (*Near-Miss*, +1) e explosões em cadeia de barris.
+  - **Vantagens mecânicas ativas durante Combo (x2+):**
+    - Multiplicador de pontuação aplicado diretamente a todos os abates e bônus de corrida.
+    - **Recarga Tática +35% mais rápida:** Em `scripts/WeaponManager.gd`, a animação procedural da Glock e timers são acelerados em 1.35x.
+    - **Recuperação de Fôlego Acelerada (+70%):** Em `scripts/Player.gd`, a estamina se regenera a 22.0/s (ao invés de 13.0/s).
+  - **Painel Tático no HUD:** Criado `TacticalComboPanel` no canto superior direito com multiplicador em destaque, título dinâmico, barra de decaimento em tempo real e animação elástica `TRANS_BACK` a cada avanço de tier.
+
+### 🎯 2. Headshot "Ding" Metálico Cirúrgico & Crunch Visceral
+- **`scripts/AudioManager.gd`:**
+  - Sintetizado proceduralmente o efeito `_synthesize_headshot_ding()` (22050 Hz, memória leve ~18 KB): combina um estalo de impacto visceral com subgrave nos primeiros 50ms e um sino metálico ressonante de alta frequência (dupla fundamental em 2200 Hz e 3520 Hz).
+  - Integrado em `scripts/WeaponManager.gd` e `scripts/HUD.gd` para disparar imediatamente na confirmação de tiro na cabeça (*Headshot Hitmarker*).
+  - Adicionado efeito sonoro ascendente `play_combo_up()` com pitch escalonado por nível de combo (1.0x até 1.48x).
+
+### 💊 3. Drops Táticos de Pista: Kits Médicos & Adrenalina Máxima (Risk vs. Reward)
+- **`scripts/AmmoPickup.gd` (Generalizado para Drops Táticos Reutilizáveis via Pooling):**
+  - Adicionado suporte nativo aos 3 tipos de pickup com troca instantânea de materiais e partículas sem alocações extras:
+    1. `AMMO` (Caixa verde-oliva + sinalizador vermelho `#ff2211`): Concede +8 balas 9mm (ou +1 faca em modo combate corpo a corpo).
+    2. `MEDKIT` (Maleta tática cinza-médica + sinalizador verde esmeralda `#00e676`): Restaura +30 HP com vinheta verde suave de recuperação e áudio consonante `play_medkit_pickup()`.
+    3. `ADRENALINE` (Ampola dourada + sinalizador âmbar `#ffb300`): Ativa modo de Adrenalina Máxima por 4.5 segundos.
+- **`scripts/Player.gd` (Mecânica de Adrenalina Máxima & Cura):**
+  - Implementado método `heal(amount)` com atualização de HUD e vinheta `HealVignette`.
+  - Implementado `trigger_adrenaline_rush(duration)`: concede estamina infinita durante a duração, +15% de velocidade de avanço e efeito **Atropelo Cinético**:
+    - Em `scripts/Zombie.gd`, se um zumbi tentar agarrar o jogador durante a Adrenalina Máxima, o jogador atropela e elimina o zumbi imediatamente com impacto físico e tremor de câmera, sem sofrer agarrão.
+- **`scripts/WorldSpawner.gd` (Distribuição Inteligente e Frequência Dinâmica):**
+  - Expandido o pool de pickups fixos de 3 para 6 instâncias.
+  - Intervalo de spawn de coletáveis reduzido de 150-200m para **100-145m**, tornando a pista rica em oportunidades.
+  - **Spawn Inteligente Adaptativo:** Se o jogador estiver com vida crítica (<55%), a probabilidade de spawn de Kit Médico sobe automaticamente para 50%, gerando decisões imediatas de sobrevivência.
+
+---
+
+## [2026-11-07 20:01:30 -03:00] — Otimização Extrema de Performance (60 FPS Web / Playgama / Mobile & Desktop)
+
+### 🚀 1. Redução Drástica de Draw Calls e Pintura Integrada via Shader
+- **`shaders/wet_asphalt.gdshader` (Reescrito para WebGL / Mobile):**
+  - Removido loop FBM multi-oitava e cálculos trigonométricos pesados (`sin`/`length`) por pixel.
+  - Integrada toda a pintura da rodovia diretamente na matemática do shader: **faixa dupla amarela central**, **faixas divisórias brancas tracejadas**, **faixas de acostamento** e **olhos-de-gato reflexivos emissivos (*cat-eyes*)** agora são renderizados em **1 único `MeshInstance3D` (1 Draw Call)** por módulo de pista, eliminando mais de 180 nós de malha da árvore de cena.
+- **`scripts/WorldSpawner.gd` (Compartilhamento de Materiais & Low-Poly Scenery):**
+  - Reduzido `total_modules` de `7` para `5` (cobrindo 250m com neblina sem desperdício de vértices no horizonte).
+  - Todos os materiais do cenário (`shared_verge_mat`, `shared_barrier_mat`, `shared_stripe_warn_mat`, `shared_pole_mat`, `shared_bulb_mat`, `shared_tree_mat`, `shared_sign_green_mat`) agora são instanciados **uma única vez** e compartilhados entre todos os módulos para *batching* automático na GPU.
+  - Reduzida a contagem de malhas periféricas para silhuetas low-poly (`radial_segments = 5`) e removidas as `SpotLight3D` individuais dos postes (substituídas por luminárias *unshaded* brilhantes com *Glow*).
+
+### 💡 2. Otimização de Pós-Processamento, Luzes e Sombras em Tempo Real
+- **`project.godot`, `scenes/Main.tscn`, `scenes/MainMenu.tscn` & `scripts/GameController.gd`:**
+  - Configurado `renderer/rendering_method="gl_compatibility"` e `renderer/rendering_method.mobile="gl_compatibility"` para máxima compatibilidade e fluidez em navegadores (Playgama/WebGL2) e celulares.
+  - Desativados efeitos pesados de pós-processamento incompatíveis com mobile: **SSR (`ssr_enabled = false`)**, **SSAO (`ssao_enabled = false`)** e **Volumetric Fog (`volumetric_fog_enabled = false`)**, substituídos por **Depth Fog exponencial** ultra-leve com transições de cor por setor.
+  - Desativado o `ScreenRainOverlay` (` hint_screen_texture`) em `scenes/HUD.tscn`, eliminando a cópia completa do framebuffer da tela a cada frame.
+  - Desativado `shadow_enabled` na `DirectionalLight3D` e na `Flashlight` (`scenes/Player.tscn`), eliminando passes extras de renderização de *Shadow Maps* nos zumbis e obstáculos.
+- **`scripts/WreckedCar.gd` & `scripts/MilitaryBarricade.gd` (Fake Volumetrics & Luz Única):**
+  - Substituída a `SpotLight3D` dos faróis dos carros por um cone translúcido aditivo *unshaded* (`HeadlightBeamMesh`) que simula o feixe de luz na neblina com **custo zero de iluminação**.
+  - Unificadas as 2 luzes do giroflex policial em **1 única `OmniLight3D`** que alterna entre vermelho e azul acompanhada de barra luminosa *unshaded*, e garantido que carros em chamas e carros policiais nunca acumulem duas luzes dinâmicas simultâneas.
+  - Substituída a `OmniLight3D` das barricadas militares por sinalizador emissivo *unshaded* (`HazardBeaconMesh`).
+  - Reduzida a contagem de partículas de chuva (`160` -> `65`) e de fogo/fumaça dos carros (`52` -> `20`).
+
+### 📱 3. Controles Touch / Swipe Nativos para Celular (Playgama Mobile)
+- **`scripts/Player.gd`:**
+  - Adicionado suporte nativo a `InputEventScreenTouch` e `InputEventScreenDrag`:
+    - **Arrastar para os lados:** Esquiva suave entre as faixas da rodovia.
+    - **Toque rápido (Tap):** Dispara a Glock / executa golpe ou resolve QTE de agarrão/emboscada.
+    - **Swipe para cima:** Salta barreiras baixas e zumbis rastejantes.
+    - **Swipe para baixo:** Desliza (*Slide*) sob vigas e placas suspensas.
+
+---
+
+## [2026-11-07 19:31:00 -03:00] — Transformação Completa: Overhaul Visual, Atmosfera Noturna e Gameplay Dinâmica
+
+### 🎨 1. Gráficos, Shaders e Ambiente (Fim do Visual Chapado)
+- **`shaders/wet_asphalt.gdshader` (NOVO):** Criado shader spatial 3D procedural para a pista da rodovia, substituindo o `BoxMesh` cinza liso por asfalto escuro granulado, trilhas de desgaste de pneus, rachaduras, poças d'água espelhadas (`roughness 0.05` / `metallic 0.72`) e ondulações concêntricas de gotas de chuva (*rain ripples*).
+- **`scripts/WorldSpawner.gd` (Cenário Periférico & Paralaxe):**
+  - Adicionado terreno escuro nas margens externas às muretas Jersey para eliminar o vazio flutuante.
+  - Adicionadas faixas divisórias brancas tracejadas entre as pistas, olhos-de-gato reflexivos emissivos (*cat-eyes*) a cada 10m nos acostamentos e balizadores verticais de alerta nas muretas para acentuar a sensação óptica de alta velocidade.
+  - Adicionada geração procedural de cenário periférico (`_populate_roadside_scenery`): árvores secas retorcidas nas margens, placas rodoviárias de evacuação/quarentena inclinadas e pórticos metálicos superiores (*highway overpass gantries*).
+  - Adicionadas luminárias emissivas nos postes de iluminação com luz volumétrica quente.
+- **`scenes/Main.tscn` & `scripts/GameController.gd` (Iluminação Dramática & Tempestade):**
+  - Reduzida a energia da `DirectionalLight3D` de `0.95` para `0.22` (luar frio azulado) e ajustada a luz ambiente noturna, valorizando o feixe da lanterna, o fogo dos carros e os sinalizadores.
+  - Ativado **SSR (Screen-Space Reflections)** no `Environment` para refletir chamas, giroflex e postes nas poças do asfalto.
+  - Implementado sistema dinâmico de **Tempestade com Relâmpagos e Trovões** (`_process_dynamic_thunderstorm` / `_trigger_lightning_strike`) que ilumina o céu com flash duplo branco-azulado, projeta sombras dramáticas e dispara o estrondo de trovão acompanhado de leve tremor de câmera.
+  - Ativado o drone sonoro contínuo de tensão/vento durante a partida.
+- **`scripts/WreckedCar.gd` (Luzes Dinâmicas nos Veículos):**
+  - Adicionados faróis volumétricos (`SpotLight3D` com mal-contato ocasional cortando a neblina) e giroflex estroboscópico policial/emergência (`SirenRedLight` e `SirenBlueLight` alternando vermelho/azul no teto dos veículos e refletindo no chão molhado).
+- **`scripts/WorldSpawner.gd` (Clímax Visual de Extração aos 700m–800m):**
+  - Implementada a Zona de Extração Militar (`_spawn_extraction_zone` / `_process_extraction_beacon`) com sinalizadores de fumaça carmesim (*flares* com partículas e luz intensa) e holofote de helicóptero (`HelicopterSearchlight`) varrendo a pista nos metros finais.
+
+### ⚡ 2. Dinamismo de Gameplay, Combate e Inimigos Reativos
+- **`scripts/MilitaryBarricade.gd` & `scripts/Player.gd` (Uso Real de Pulo e Slide):**
+  - Transformadas as barricadas militares em 3 variantes táticas com sinalização luminosa e indicador 3D:
+    1. `LOW_VAULT` (Verde — `[ESPAÇO] SALTAR`): Barreira baixa que permite saltar por cima em plena corrida.
+    2. `HIGH_SLIDE` (Ciano — `[SHIFT] DESLIZAR`): Viga elevada que exige deslizar por baixo.
+    3. `FULL_BLOCK` (Laranja — Bloqueio Total): Exige mudança rápida de faixa.
+  - Ajustado o `CapsuleShape3D` do jogador durante o Slide (`_set_collision_slide_mode`) para reduzir a altura física de `1.80m` para `0.90m`, permitindo passar por baixo de obstáculos suspensos.
+- **`scripts/Zombie.gd` (Comportamento Inimigo Dinâmico e Impacto Físico):**
+  - **Bote Súbito (*Lunge Attack*):** Zumbis agressivos agora podem dar um arranque lateral repentino com som de ataque quando o jogador se aproxima entre `4.5m` e `11.0m` em uma faixa adjacente.
+  - **Zumbis Rastejantes (*Crawlers*):** 14% dos zumbis surgem rastejando no asfalto, podendo ser superados com o **Pulo (`[Espaço]`)** por cima deles ou abatidos mirando baixo.
+  - **Flinch & Knockback Balístico:** Zumbis sofrem recuo físico e inclinação de tronco ao receberem tiros da Glock, além de empurrão cinético para trás ao morrerem.
+- **`scripts/WeaponManager.gd` & `scripts/HUD.gd` (Juice de Combate):**
+  - Adicionado **Rastro Luminoso de Bala (*Bullet Tracer*)** cortando a escuridão da boca do cano até o ponto de impacto.
+  - Adicionadas faíscas metálicas (`MetalSparks.tscn`) ao atingir carros, muretas ou concreto.
+  - Adicionado **Hitmarker Tático (`✕`)** no centro da mira ao acertar zumbis (branco para acertos normais, vermelho/ampliado para *Headshots*).
+- **`scripts/Player.gd` & `scripts/WorldSpawner.gd` (Sensação de Velocidade):**
+  - Elevada a velocidade base e aceleração da corrida (`11.8 m/s` até `19.5 m/s`), ampliado o FOV dinâmico proporcional à velocidade e intensificada a inclinação fluido-inercial (*tilt/roll*) da câmera e da arma nas esquivas laterais.
+
+### 🐛 3. Correções de Bugs Críticos
+- **`scripts/ExplosiveBarrel.gd`:** Removido o `queue_free()` ao explodir barris; agora os barris apenas ocultam sua malha e desativam partículas após a explosão, preservando as 4 instâncias do *Object Pool* durante toda a partida.
+- **`scripts/GameManager.gd`:** Corrigida a sobrescrita de `target_distance` no loop de física do modo Campanha, garantindo que o gatilho de vitória aos `800m` e a barra de progresso funcionem de forma consistente.

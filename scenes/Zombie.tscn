@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://dzombierealistic01"]
+
+[ext_resource type="Script" path="res://scripts/Zombie.gd" id="1_zombie"]
+[ext_resource type="Script" path="res://scripts/HeadHitbox.gd" id="2_headhitbox"]
+[ext_resource type="PackedScene" path="res://assets/Animation/Zombies/undead zombie walking.glb" id="3_zombiemodel"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.36
+height = 1.35
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_head"]
+radius = 0.22
+
+[node name="Zombie" type="CharacterBody3D" node_paths=PackedStringArray("model_root", "body_collision", "head_hitbox", "head_collision") groups=["enemies"]]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_zombie")
+model_root = NodePath("ModelRoot")
+body_collision = NodePath("CollisionShape3D")
+head_hitbox = NodePath("HeadHitbox")
+head_collision = NodePath("HeadHitbox/CollisionShape3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.72, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="HeadHitbox" type="Area3D" parent="." node_paths=PackedStringArray("zombie")]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_headhitbox")
+zombie = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HeadHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58, -0.1)
+shape = SubResource("SphereShape3D_head")
+
+[node name="ModelRoot" type="Node3D" parent="."]
+transform = Transform3D(1.78, 0, 0, 0, 1.78, 0, 0, 0, 1.78, 0, 0, 0)
+
+[node name="UndeadZombieModel" parent="ModelRoot" instance=ExtResource("3_zombiemodel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

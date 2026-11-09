@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ammobox01"]
+
+[ext_resource type="Script" path="res://scripts/AmmoBox.gd" id="1_ammobox"]
+
+[node name="AmmoBox" type="Area3D" groups=["pickups"]]
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_ammobox")

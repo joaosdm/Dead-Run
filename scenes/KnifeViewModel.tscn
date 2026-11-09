@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/KnifeViewModel.gd" id="1_knife"]
+[ext_resource type="PackedScene" uid="uid://ci34vxm888s5v" path="res://assets/3D/tactical knife 3d model.glb" id="2_model"]
+
+[node name="KnifeViewModel" type="Node3D" node_paths=PackedStringArray("model_holder", "melee_ray")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.42, -0.45)
+visible = false
+script = ExtResource("1_knife")
+model_holder = NodePath("ModelHolder")
+melee_ray = NodePath("MeleeRay")
+
+[node name="ModelHolder" type="Node3D" parent="."]
+
+[node name="tactical knife 3d model" parent="ModelHolder" instance=ExtResource("2_model")]
+transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 0, 0, 0)
+
+[node name="MeleeRay" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -1.8)
+collision_mask = 4
+collide_with_areas = true

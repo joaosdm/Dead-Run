@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://bloodimpact01"]
+
+[ext_resource type="Script" path="res://scripts/BloodImpact.gd" id="1_blood"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blood"]
+albedo_color = Color(0.45, 0.055, 0.055, 1)
+roughness = 0.3
+
+[sub_resource type="SphereMesh" id="SphereMesh_drop"]
+material = SubResource("StandardMaterial3D_blood")
+radius = 0.03
+height = 0.06
+radial_segments = 6
+rings = 4
+
+[node name="BloodImpact" type="CPUParticles3D"]
+emitting = false
+amount = 30
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("SphereMesh_drop")
+emission_shape = 1
+emission_sphere_radius = 0.08
+direction = Vector3(0, 0.4, 1)
+spread = 75.0
+gravity = Vector3(0, -14, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 7.0
+damping_min = 1.5
+damping_max = 3.0
+script = ExtResource("1_blood")

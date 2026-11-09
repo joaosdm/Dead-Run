@@ -1,0 +1,101 @@
+[gd_scene load_steps=12 format=3 uid="uid://expbarrel01"]
+
+[ext_resource type="Script" path="res://scripts/ExplosiveBarrel.gd" id="1_barrel"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_col"]
+height = 1.05
+radius = 0.44
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_red"]
+albedo_color = Color(0.85, 0.14, 0.12, 1)
+metallic = 0.72
+roughness = 0.38
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_body"]
+material = SubResource("StandardMaterial3D_red")
+top_radius = 0.42
+bottom_radius = 0.42
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steel"]
+albedo_color = Color(0.18, 0.2, 0.22, 1)
+metallic = 0.92
+roughness = 0.3
+
+[sub_resource type="TorusMesh" id="TorusMesh_rim"]
+material = SubResource("StandardMaterial3D_steel")
+inner_radius = 0.4
+outer_radius = 0.44
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hazard"]
+albedo_color = Color(0.95, 0.78, 0.1, 1)
+metallic = 0.5
+roughness = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stripe"]
+material = SubResource("StandardMaterial3D_hazard")
+top_radius = 0.425
+bottom_radius = 0.425
+height = 0.14
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_fire"]
+direction = Vector3(0, 1, 0)
+spread = 80.0
+initial_velocity_min = 6.0
+initial_velocity_max = 12.0
+gravity = Vector3(0, -5, 0)
+scale_min = 0.3
+scale_max = 1.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle"]
+shading_mode = 0
+albedo_color = Color(1, 0.55, 0.12, 0.95)
+
+[sub_resource type="SphereMesh" id="SphereMesh_part"]
+material = SubResource("StandardMaterial3D_particle")
+radius = 0.22
+height = 0.44
+
+[node name="ExplosiveBarrel" type="StaticBody3D" groups=["destructibles", "explosive_barrels", "obstacles"]]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_barrel")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.525, 0)
+shape = SubResource("CylinderShape3D_col")
+
+[node name="VisualMesh" type="Node3D" parent="."]
+
+[node name="BarrelBody" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("CylinderMesh_body")
+
+[node name="TopRim" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, 0)
+mesh = SubResource("TorusMesh_rim")
+
+[node name="BottomRim" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+mesh = SubResource("TorusMesh_rim")
+
+[node name="HazardStripe" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("CylinderMesh_stripe")
+
+[node name="ExplosionLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+visible = false
+light_color = Color(1, 0.42, 0.08, 1)
+light_energy = 0.0
+omni_range = 10.0
+
+[node name="FireParticles" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+emitting = false
+amount = 24
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.92
+process_material = SubResource("ParticleProcessMaterial_fire")
+draw_pass_1 = SubResource("SphereMesh_part")

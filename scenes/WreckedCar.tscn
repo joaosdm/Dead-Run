@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://wreckedcar01"]
+
+[ext_resource type="Script" path="res://scripts/WreckedCar.gd" id="1_wreckedcar"]
+[ext_resource type="PackedScene" path="res://assets/3D/wrecked+car+3d+model.glb" id="2_carmodel"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chassis"]
+size = Vector3(2, 1.4, 4.6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_scrape"]
+size = Vector3(2.55, 1.4, 4.4)
+
+[node name="WreckedCar" type="StaticBody3D" groups=["obstacles"]]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_wreckedcar")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("BoxShape3D_chassis")
+
+[node name="SideScrapeArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+collision_layer = 1
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SideScrapeArea"]
+shape = SubResource("BoxShape3D_scrape")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="WreckedCarModel" parent="VisualRoot" instance=ExtResource("2_carmodel")]
+transform = Transform3D(0, 0, 4.5, 0, 4.5, 0, -4.5, 0, 0, 0, 0, 0)

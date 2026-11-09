@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=3 uid="uid://c5plddeadrun01"]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/WeaponManager.gd" id="2_weapon"]
+[ext_resource type="PackedScene" path="res://scenes/KnifeViewModel.tscn" id="3_knife"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rain"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.8, 0.9, 1, 0.25)
+
+[sub_resource type="QuadMesh" id="QuadMesh_rain"]
+material = SubResource("StandardMaterial3D_rain")
+size = Vector2(0.012, 0.4)
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("camera", "camera_pivot", "flashlight", "viewmodel_anchor", "weapon_manager", "knife_view_model", "muzzle_flash_light", "collision_shape") groups=["player"]]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player")
+camera = NodePath("CameraPivot/Camera3D")
+camera_pivot = NodePath("CameraPivot")
+flashlight = NodePath("CameraPivot/Camera3D/Flashlight")
+viewmodel_anchor = NodePath("CameraPivot/Camera3D/ViewmodelAnchor")
+weapon_manager = NodePath("CameraPivot/Camera3D/ViewmodelAnchor/WeaponManager")
+knife_view_model = NodePath("CameraPivot/Camera3D/KnifeViewModel")
+muzzle_flash_light = NodePath("CameraPivot/Camera3D/ViewmodelAnchor/WeaponManager/WeaponHolder/MuzzlePoint/MuzzleLight")
+collision_shape = NodePath("CollisionShape3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+current = true
+fov = 75.0
+near = 0.05
+far = 85.0
+
+[node name="RainParticles" type="CPUParticles3D" parent="CameraPivot/Camera3D"]
+amount = 160
+lifetime = 0.4
+preprocess = 0.4
+mesh = SubResource("QuadMesh_rain")
+emission_shape = 3
+emission_box_extents = Vector3(7, 4, 7)
+direction = Vector3(-0.045, -0.99, 0.135)
+spread = 1.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 22.0
+initial_velocity_max = 22.5
+
+[node name="Flashlight" type="SpotLight3D" parent="CameraPivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -0.05, -0.1)
+light_color = Color(0.98, 0.96, 0.92, 1)
+light_energy = 2.6
+light_volumetric_fog_energy = 0.0
+shadow_enabled = false
+spot_range = 42.0
+spot_angle = 36.0
+spot_attenuation = 1.35
+
+[node name="ViewmodelAnchor" type="Marker3D" parent="CameraPivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -0.46, -0.48)
+
+[node name="WeaponManager" type="Node3D" parent="CameraPivot/Camera3D/ViewmodelAnchor" node_paths=PackedStringArray("weapon_holder", "muzzle_light", "muzzle_point")]
+script = ExtResource("2_weapon")
+weapon_holder = NodePath("WeaponHolder")
+muzzle_light = NodePath("WeaponHolder/MuzzlePoint/MuzzleLight")
+muzzle_point = NodePath("WeaponHolder/MuzzlePoint")
+
+[node name="WeaponHolder" type="Node3D" parent="CameraPivot/Camera3D/ViewmodelAnchor/WeaponManager"]
+
+[node name="MuzzlePoint" type="Marker3D" parent="CameraPivot/Camera3D/ViewmodelAnchor/WeaponManager/WeaponHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.30, -0.33)
+
+[node name="MuzzleLight" type="OmniLight3D" parent="CameraPivot/Camera3D/ViewmodelAnchor/WeaponManager/WeaponHolder/MuzzlePoint"]
+visible = false
+light_color = Color(1, 0.6, 0.1333, 1)
+light_energy = 0.0
+omni_range = 8.0
+
+[node name="KnifeViewModel" parent="CameraPivot/Camera3D" instance=ExtResource("3_knife")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.42, -0.45)
+visible = false
+

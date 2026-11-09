@@ -1,0 +1,74 @@
+[gd_scene load_steps=10 format=3 uid="uid://milbarricade01"]
+
+[ext_resource type="Script" path="res://scripts/MilitaryBarricade.gd" id="1_barricade"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_col"]
+size = Vector3(4.2, 1.4, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_concrete"]
+albedo_color = Color(0.35, 0.36, 0.38, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="BoxMesh_concrete"]
+material = SubResource("StandardMaterial3D_concrete")
+size = Vector3(4.2, 0.9, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rebar"]
+albedo_color = Color(0.2, 0.22, 0.24, 1)
+metallic = 0.85
+roughness = 0.45
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wire"]
+material = SubResource("StandardMaterial3D_rebar")
+top_radius = 0.04
+bottom_radius = 0.04
+height = 4.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hazard"]
+albedo_color = Color(0.85, 0.65, 0.1, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_hazard"]
+material = SubResource("StandardMaterial3D_hazard")
+size = Vector3(4.22, 0.16, 0.82)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_post"]
+material = SubResource("StandardMaterial3D_rebar")
+top_radius = 0.05
+bottom_radius = 0.06
+height = 1.3
+
+[node name="MilitaryBarricade" type="StaticBody3D" groups=["obstacles"]]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_barricade")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("BoxShape3D_col")
+
+[node name="VisualMesh" type="Node3D" parent="."]
+
+[node name="ConcreteBase" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("BoxMesh_concrete")
+
+[node name="HazardStripe" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("BoxMesh_hazard")
+
+[node name="PostLeft" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.65, 0)
+mesh = SubResource("CylinderMesh_post")
+
+[node name="PostRight" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.65, 0)
+mesh = SubResource("CylinderMesh_post")
+
+[node name="BarbedWireTop" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 1.15, 0)
+mesh = SubResource("CylinderMesh_wire")
+
+[node name="BarbedWireMid" type="MeshInstance3D" parent="VisualMesh"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 1.3, 0)
+mesh = SubResource("CylinderMesh_wire")
